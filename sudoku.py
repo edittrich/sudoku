@@ -60,6 +60,11 @@ def solve(y_sudoku, x_sudoku):
         return False
 
 
+def create(fields):
+    for i in range(1, fields):
+        continue
+
+
 def visualize():
 
     for y in range(0, 9):
@@ -83,6 +88,7 @@ def visualize():
 
 if __name__ == '__main__':
     board = list(board_01)
+    create(20)
     visualize()
     solve(0, 0)
     visualize()
