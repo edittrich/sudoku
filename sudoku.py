@@ -44,12 +44,8 @@ def solve(y_sudoku, x_sudoku):
     if y_sudoku == 9:
         return True
 
-    if x_sudoku < 8:
-        x_new_sudoku = x_sudoku + 1
-        y_new_sudoku = y_sudoku
-    else:
-        x_new_sudoku = 0
-        y_new_sudoku = y_sudoku + 1
+    x_new_sudoku = (x_sudoku + 1) % 9
+    y_new_sudoku = (y_sudoku * 9 + x_sudoku + 1) // 9
 
     if board[y_sudoku][x_sudoku] > 0:
         return solve(y_new_sudoku, x_new_sudoku)
