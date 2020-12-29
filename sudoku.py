@@ -1,3 +1,11 @@
+import random
+
+levels = {
+    "einfach": 65,
+    "normal": 29,
+    "schwer": 26
+}
+
 board_00 = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -23,50 +31,60 @@ board_01 = [
     ]
 
 
-def validate(y_sudoku, x_sudoku, digit):
+def validate(y, x):
+    n = board[y][x]
     for i in range(0, 9):
-        if board[y_sudoku][i] == digit and x_sudoku != i:
+        if board[y][i] == n and x != i:
             return False
 
     for i in range(0, 9):
-        if board[i][x_sudoku] == digit and y_sudoku != i:
+        if board[i][x] == n and y != i:
             return False
 
-    for i in range(y_sudoku // 3 * 3, y_sudoku // 3 * 3 + 3):
-        for j in range(x_sudoku // 3 * 3, x_sudoku // 3 * 3 + 3):
-            if board[i][j] == digit and y_sudoku != i and x_sudoku != j:
+    for i in range(y // 3 * 3, y // 3 * 3 + 3):
+        for j in range(x // 3 * 3, x // 3 * 3 + 3):
+            if board[i][j] == n and y != i and x != j:
                 return False
 
     return True
 
 
-def solve(y_sudoku, x_sudoku):
-    if y_sudoku == 9:
+def solve(y, x):
+    if y == 9:
         return True
 
-    x_new_sudoku = (x_sudoku + 1) % 9
-    y_new_sudoku = (y_sudoku * 9 + x_sudoku + 1) // 9
+    x_new = (x + 1) % 9
+    y_new = (y * 9 + x + 1) // 9
 
-    if board[y_sudoku][x_sudoku] > 0:
-        return solve(y_new_sudoku, x_new_sudoku)
+    if board[y][x] > 0:
+        return solve(y_new, x_new)
     else:
-        for digit in range(1, 10):
-            board[y_sudoku][x_sudoku] = digit
-            if validate(y_sudoku, x_sudoku, digit):
-                if solve(y_new_sudoku, x_new_sudoku):
+        for n in range(1, 10):
+            board[y][x] = n
+            if validate(y, x):
+                if solve(y_new, x_new):
                     return True
 
-        board[y_sudoku][x_sudoku] = 0
+        board[y][x] = 0
         return False
 
 
-def create(fields):
-    for i in range(1, fields):
-        continue
+def create(level):
+    i = 0
+    while i < levels[level]:
+        x = random.randint(0, 8)
+        y = random.randint(0, 8)
+
+        if board[y][x] == 0:
+            n = random.randint(1, 9)
+            board[y][x] = n
+            if validate(y, x):
+                i += 1
+            else:
+                board[y][x] = 0
 
 
 def visualize():
-
     for y in range(0, 9):
         if y == 0:
             print('┌───┬───┬───┐')
@@ -82,13 +100,12 @@ def visualize():
         print('│')
 
     print('└───┴───┴───┘')
-
     print('')
 
 
 if __name__ == '__main__':
-    board = list(board_01)
-    create(20)
+    board = list(board_00)
+    create("einfach")
     visualize()
     solve(0, 0)
     visualize()
