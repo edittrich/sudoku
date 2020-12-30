@@ -1,5 +1,5 @@
 from datetime import datetime
-import random
+from random import randint
 
 levels = {
     "einfach": 33,
@@ -89,7 +89,7 @@ def create(y=0, x=0):
     y_new = (y * 9 + x + 1) // 9
 
     for i in range(0, len(list_n)):
-        n = list_n[random.randint(0, len(list_n)) - 1]
+        n = list_n[randint(0, len(list_n)) - 1]
         board[y][x] = n
         list_n.remove(n)
         if y_new == 9 or create(y_new, x_new):
@@ -101,11 +101,11 @@ def create(y=0, x=0):
 
 def rate(rating):
     i = 0
-    n = 81 - levels[rating] - random.randint(0, 3)
+    n = 81 - levels[rating] - randint(0, 3)
 
     while i < n:
-        x = random.randint(0, 8)
-        y = random.randint(0, 8)
+        x = randint(0, 8)
+        y = randint(0, 8)
         if board[y][x] != 0:
             board[y][x] = 0
             i += 1
