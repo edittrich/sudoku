@@ -1,3 +1,12 @@
+from datetime import datetime
+from random import randint
+
+levels = {
+    "einfach": 33,
+    "mittel": 29,
+    "schwer": 25
+}
+
 board_00 = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -23,45 +32,7 @@ board_01 = [
     ]
 
 
-def validate(y_sudoku, x_sudoku, digit):
-    for i in range(0, 9):
-        if board[y_sudoku][i] == digit and x_sudoku != i:
-            return False
-
-    for i in range(0, 9):
-        if board[i][x_sudoku] == digit and y_sudoku != i:
-            return False
-
-    for i in range(y_sudoku // 3 * 3, y_sudoku // 3 * 3 + 3):
-        for j in range(x_sudoku // 3 * 3, x_sudoku // 3 * 3 + 3):
-            if board[i][j] == digit and y_sudoku != i and x_sudoku != j:
-                return False
-
-    return True
-
-
-def solve(y_sudoku, x_sudoku):
-    if y_sudoku == 9:
-        return True
-
-    x_new_sudoku = (x_sudoku + 1) % 9
-    y_new_sudoku = (y_sudoku * 9 + x_sudoku + 1) // 9
-
-    if board[y_sudoku][x_sudoku] > 0:
-        return solve(y_new_sudoku, x_new_sudoku)
-    else:
-        for digit in range(1, 10):
-            board[y_sudoku][x_sudoku] = digit
-            if validate(y_sudoku, x_sudoku, digit):
-                if solve(y_new_sudoku, x_new_sudoku):
-                    return True
-
-        board[y_sudoku][x_sudoku] = 0
-        return False
-
-
 def visualize():
-
     for y in range(0, 9):
         if y == 0:
             print('┌───┬───┬───┐')
@@ -77,12 +48,100 @@ def visualize():
         print('│')
 
     print('└───┴───┴───┘')
-
     print('')
 
 
+def validate(y, x):
+    n = board[y][x]
+    for i in range(0, 9):
+        if board[y][i] == n and x != i:
+            return False
+
+    for i in range(0, 9):
+        if board[i][x] == n and y != i:
+            return False
+
+    for i in range(y // 3 * 3, y // 3 * 3 + 3):
+        for j in range(x // 3 * 3, x // 3 * 3 + 3):
+            if board[i][j] == n and y != i and x != j:
+                return False
+
+    return True
+
+
+def create(y=0, x=0):
+    list_n = list(range(1, 10))
+
+    for i in range(0, 9):
+        if board[y][i] in list_n:
+            list_n.remove(board[y][i])
+
+    for i in range(0, 9):
+        if board[i][x] in list_n:
+            list_n.remove(board[i][x])
+
+    for i in range(y // 3 * 3, y // 3 * 3 + 3):
+        for j in range(x // 3 * 3, x // 3 * 3 + 3):
+            if board[i][j] in list_n:
+                list_n.remove(board[i][j])
+
+    x_new = (x + 1) % 9
+    y_new = (y * 9 + x + 1) // 9
+
+    for i in range(0, len(list_n)):
+        n = list_n[randint(0, len(list_n)) - 1]
+        board[y][x] = n
+        list_n.remove(n)
+        if y_new == 9 or create(y_new, x_new):
+            return True
+
+    board[y][x] = 0
+    return False
+
+
+def rate(rating):
+    i = 0
+    n = 81 - levels[rating] - randint(0, 3)
+
+    while i < n:
+        x = randint(0, 8)
+        y = randint(0, 8)
+        if board[y][x] != 0:
+            board[y][x] = 0
+            i += 1
+
+
+def solve(y=0, x=0):
+    if y == 9:
+        return True
+
+    x_new = (x + 1) % 9
+    y_new = (y * 9 + x + 1) // 9
+
+    if board[y][x] > 0:
+        return solve(y_new, x_new)
+    else:
+        for n in range(1, 10):
+            board[y][x] = n
+            if validate(y, x):
+                if solve(y_new, x_new):
+                    return True
+
+        board[y][x] = 0
+        return False
+
+
 if __name__ == '__main__':
-    board = list(board_01)
+    board = list(board_00)
+    t = datetime.now()
+    create()
+    print("Create: ", datetime.now() - t)
     visualize()
-    solve(0, 0)
+    t = datetime.now()
+    rate("schwer")
+    print("Rate:   ", datetime.now() - t)
+    visualize()
+    t = datetime.now()
+    solve()
+    print("Solve:  ", datetime.now() - t)
     visualize()
