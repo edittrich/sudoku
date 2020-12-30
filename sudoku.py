@@ -69,19 +69,38 @@ def solve(y, x):
         return False
 
 
-def create(level):
-    i = 0
-    while i < levels[level]:
-        x = random.randint(0, 8)
-        y = random.randint(0, 8)
+def create(y, x):
+    if y == 9:
+        return True
 
-        if board[y][x] == 0:
-            n = random.randint(1, 9)
-            board[y][x] = n
-            if validate(y, x):
-                i += 1
-            else:
-                board[y][x] = 0
+    x_new = (x + 1) % 9
+    y_new = (y * 9 + x + 1) // 9
+
+    list_n = list(range(1, 10))
+
+    for i in range(0, 9):
+        if board[y][i] in list_n:
+            list_n.remove(board[y][i])
+
+    for i in range(0, 9):
+        if board[i][x] in list_n:
+            list_n.remove(board[i][x])
+
+    for i in range(y // 3 * 3, y // 3 * 3 + 3):
+        for j in range(x // 3 * 3, x // 3 * 3 + 3):
+            if board[i][j] in list_n:
+                list_n.remove(board[i][j])
+
+    for i in range(0, len(list_n)):
+        n = list_n[random.randint(0, len(list_n)) - 1]
+        board[y][x] = n
+        list_n.remove(n)
+        if validate(y, x):
+            if create(y_new, x_new):
+                return True
+
+    board[y][x] = 0
+    return False
 
 
 def visualize():
@@ -105,7 +124,7 @@ def visualize():
 
 if __name__ == '__main__':
     board = list(board_00)
-    create("einfach")
+    create(0, 0)
     visualize()
     solve(0, 0)
     visualize()
