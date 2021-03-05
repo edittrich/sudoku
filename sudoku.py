@@ -133,14 +133,17 @@ def solve(y=0, x=0):
 
 if __name__ == '__main__':
     board = list(board_00)
+
     t = datetime.now()
     create()
     print("Create: ", datetime.now() - t)
     visualize()
+
     t = datetime.now()
     rate("schwer")
     print("Rate:   ", datetime.now() - t)
     visualize()
+
     t = datetime.now()
     solve()
     print("Solve:  ", datetime.now() - t)
